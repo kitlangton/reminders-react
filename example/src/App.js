@@ -1,13 +1,4 @@
-import React, { Component } from 'react'
+import App from "reminders-react";
+import "reminders-react/dist/App.css";
 
-import ExampleComponent from 'reminders-react'
-
-export default class App extends Component {
-  render () {
-    return (
-      <div>
-        <ExampleComponent text='Modern React component module' />
-      </div>
-    )
-  }
-}
+export default App;

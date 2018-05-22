@@ -3,24 +3,15 @@
  */
 
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-
-import styles from './styles.css'
+import App from './App'
+import 'react-datepicker/dist/react-datepicker.css'
+import './App.css'
+//
+// export default App
 
 export default class ExampleComponent extends Component {
-  static propTypes = {
-    text: PropTypes.string
-  }
-
   render() {
-    const {
-      text
-    } = this.props
-
-    return (
-      <div className={styles.test}>
-        Example Component: {text}
-      </div>
-    )
+    return <App />
+    // return <div className={styles.test}>Nice Example Component: {text}</div>
   }
 }
