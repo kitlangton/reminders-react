@@ -228,14 +228,19 @@
 #newest-reminder {
   border-radius: 3px;
   animation-name: fade;
-  animation-duration: 8s;
+  animation-duration: 3s;
+  transform: scale(1);
 }
 
 @keyframes fade {
   from {
-    color: gold;
+    background-color: gold;
+    padding: 5px;
+    transform: scale(1.06);
   }
   to {
-    color: black;
+    padding: 0px;
+    background-color: white;
+    transform: scale(1);
   }
 }

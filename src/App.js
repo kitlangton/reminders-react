@@ -16,8 +16,11 @@ class App extends Component {
     newestReminderID: null,
     recipients: [],
     date: moment(),
-    open: true
+    open: false
   }
+
+  open = () => this.setState({ open: true })
+  close = () => this.setState({ open: false })
 
   componentDidMount = () => {
     this.fetchReminders()
@@ -110,7 +113,10 @@ class App extends Component {
         {styles => (
           <div
             className='reminders-container'
-            style={{ opacity: styles.opacity }}
+            style={{
+              opacity: styles.opacity,
+              pointerEvents: open ? 'all' : 'none'
+            }}
           >
             <div
               className='reminders'

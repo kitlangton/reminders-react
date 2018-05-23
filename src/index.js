@@ -1,11 +1,11 @@
 /**
- * @class ExampleComponent
+ * @class Reminders
  */
 
-import React from 'react'
-import ReactDOM from 'react-dom'
-import App from './App'
+import Reminders from './App'
 import 'react-datepicker/dist/react-datepicker.css'
 import './App.css'
+//
+// export default App
 
-export default id => ReactDOM.render(<App />, document.getElementById(id))
+export default Reminders
