@@ -2,16 +2,10 @@
  * @class ExampleComponent
  */
 
-import React, { Component } from 'react'
+import React from 'react'
+import ReactDOM from 'react-dom'
 import App from './App'
 import 'react-datepicker/dist/react-datepicker.css'
 import './App.css'
-//
-// export default App
 
-export default class ExampleComponent extends Component {
-  render() {
-    return <App />
-    // return <div className={styles.test}>Nice Example Component: {text}</div>
-  }
-}
+export default id => ReactDOM.render(<App />, document.getElementById(id))
