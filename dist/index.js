@@ -27173,25 +27173,8 @@ styleInject(css$2);
  * @class ExampleComponent
  */
 
-//
-// export default App
+var index$2 = (function (id) {
+  return ReactDOM__default.render(React__default.createElement(App, null), document.getElementById(id));
+});
 
-var ExampleComponent = function (_Component) {
-  inherits$1(ExampleComponent, _Component);
-
-  function ExampleComponent() {
-    classCallCheck$2(this, ExampleComponent);
-    return possibleConstructorReturn$1(this, (ExampleComponent.__proto__ || Object.getPrototypeOf(ExampleComponent)).apply(this, arguments));
-  }
-
-  createClass$2(ExampleComponent, [{
-    key: 'render',
-    value: function render() {
-      return React__default.createElement(App, null);
-      // return <div className={styles.test}>Nice Example Component: {text}</div>
-    }
-  }]);
-  return ExampleComponent;
-}(React.Component);
-
-module.exports = ExampleComponent;
+module.exports = index$2;
