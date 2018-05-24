@@ -131,7 +131,7 @@ class App extends Component {
                   <Transition
                     keys={this.sections().map(item => item)}
                     from={{ opacity: 0, height: 0 }}
-                    enter={{ opacity: 1, height: 20 }}
+                    enter={{ opacity: 1, height: 16 }}
                     leave={{ opacity: 0, height: 0 }}
                   >
                     {this.sections().map(section => styles => (
@@ -148,7 +148,7 @@ class App extends Component {
                   <Transition
                     keys={this.buttons().map(item => item)}
                     from={{ opacity: 0, height: 0 }}
-                    enter={{ opacity: 1, height: 20 }}
+                    enter={{ opacity: 1, height: 16 }}
                     leave={{ opacity: 0, height: 0 }}
                   >
                     {this.buttons().map(section => styles => (

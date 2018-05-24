@@ -49,7 +49,6 @@
   flex: 1;
   font-weight: bold;
   font-size: 18px;
-  height: 20px;
   overflow: hidden;
 }
 
@@ -136,8 +135,6 @@
   cursor: pointer;
   color: white;
   padding: 5px 10px;
-  /* width: 160px; */
-  height: 16px;
   overflow: hidden;
   display: inline-block;
   text-align: center;
@@ -326,11 +323,14 @@ summary,
 time,
 mark,
 audio,
+textarea,
+input,
 video {
   margin: 0;
   padding: 0;
   border: 0;
   font-size: 100%;
+  height: inherit;
   font: inherit;
   vertical-align: baseline;
 }
@@ -346,7 +346,4 @@ menu,
 nav,
 section {
   display: block;
-}
-body {
-  line-height: 1;
 }
