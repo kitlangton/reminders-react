@@ -327,14 +327,19 @@ class Reminder extends Component {
 
   componentDidMount = () => {
     let { id, newestReminderID } = this.props
-    if (id === newestReminderID) {
-      $('.reminders-list, .reminders-body, .split2').animate(
-        {
-          scrollTop: $('#newest-reminder').offset().top
-        },
-        1000
-      )
-    }
+    setTimeout(() => {
+      if (id === newestReminderID) {
+        console.log($('.split2').scrollTop())
+        console.log($('#newest-reminder').offset().top)
+        $('.split2').animate(
+          {
+            scrollTop:
+              $('#newest-reminder').offset().top + $('.split2').scrollTop()
+          },
+          1000
+        )
+      }
+    }, 400)
   }
 
   render = () => {
