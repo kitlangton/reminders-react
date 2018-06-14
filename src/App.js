@@ -5,6 +5,7 @@ import DatePicker from 'react-datepicker'
 import moment from 'moment'
 import lightbulb from './lightbulb.svg'
 import Popover from 'react-popover'
+const rp = require('request-promise')
 
 class App extends Component {
   state = {
@@ -34,33 +35,36 @@ class App extends Component {
   }
 
   fetchReminders = () => {
-    return fetch('/reminders')
-      .then(r => r.json())
-      .then(data => {
-        const reminders = data.map(r => ({
-          ...r,
-          date: moment.unix(r.date)
-        }))
+    return rp({
+      json: true,
+      method: 'GET',
+      uri: window.location.origin + '/reminders'
+    }).then(data => {
+      const reminders = data.map(r => ({
+        ...r,
+        date: moment.unix(r.date)
+      }))
 
-        this.setState({ reminders })
-      })
+      this.setState({ reminders })
+    })
   }
 
   postReminder = () => {
     const { recipients, date, reminderText } = this.state
 
-    return fetch('/reminders', {
-      body: JSON.stringify({
+    return rp({
+      uri: window.location.origin + '/reminders',
+      body: {
         recipients,
         date: date.unix(),
         text: reminderText
-      }),
+      },
+      json: true,
       headers: {
         'content-type': 'application/json'
       },
       method: 'POST' // *GET, POST, PUT, DELETE, etc.
     })
-      .then(response => response.json()) // parses response to JSON
       .then(reminder => {
         this.setState({
           recipients: [],
@@ -256,8 +260,6 @@ class NewReminder extends Component {
           rows={1}
           value={reminderText}
           autoFocus={true}
-          // defaultValue="Follow up w/ Dr. Pickel on this. This is a second line of text
-          // to represent what happens when text wraps"
         />
         <div className='hr' />
         <div className='reminders-section'>
@@ -329,8 +331,6 @@ class Reminder extends Component {
     let { id, newestReminderID } = this.props
     setTimeout(() => {
       if (id === newestReminderID) {
-        console.log($('.split2').scrollTop())
-        console.log($('#newest-reminder').offset().top)
         $('.split2').animate(
           {
             scrollTop:

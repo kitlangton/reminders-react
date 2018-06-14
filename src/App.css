@@ -219,6 +219,10 @@
   font-size: 14px;
 }
 
+.Popover {
+  z-index: 500;
+}
+
 .Popover-tipShape {
   fill: hsl(0, 0%, 27%);
 }
