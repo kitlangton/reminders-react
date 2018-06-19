@@ -39,10 +39,10 @@ class App extends Component {
       json: true,
       method: 'GET',
       uri: window.location.origin + '/reminders'
-    }).then(data => {
+    }).then(({ data }) => {
       const reminders = data.map(r => ({
         ...r,
-        date: moment.unix(r.date)
+        due: moment(r.due)
       }))
 
       this.setState({ reminders })
@@ -55,9 +55,11 @@ class App extends Component {
     return rp({
       uri: window.location.origin + '/reminders',
       body: {
-        recipients,
-        date: date.unix(),
-        text: reminderText
+        reminder: {
+          recipients,
+          due: date.format(),
+          body: reminderText
+        }
       },
       json: true,
       headers: {
@@ -65,7 +67,7 @@ class App extends Component {
       },
       method: 'POST' // *GET, POST, PUT, DELETE, etc.
     })
-      .then(reminder => {
+      .then(({ data: reminder }) => {
         this.setState({
           recipients: [],
           newRecipient: '',
@@ -343,14 +345,14 @@ class Reminder extends Component {
   }
 
   render = () => {
-    let { date, recipients, text, id, newestReminderID } = this.props
+    let { due, recipients, body, id, newestReminderID } = this.props
     return (
       <div
         className='reminder'
         id={newestReminderID === id ? 'newest-reminder' : ''}
       >
         <div className='reminder-header'>
-          <div className='reminder-date'>{date.format('LL')}</div>
+          <div className='reminder-date'>{due.format('LL')}</div>
           {recipients.length ? (
             <Popover
               body={
@@ -379,7 +381,7 @@ class Reminder extends Component {
             ''
           )}
         </div>
-        <div className='reminder-body'>{text}</div>
+        <div className='reminder-body'>{body}</div>
       </div>
     )
   }

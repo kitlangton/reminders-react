@@ -26632,10 +26632,12 @@ var App = function (_Component) {
         json: true,
         method: 'GET',
         uri: window.location.origin + '/reminders'
-      }).then(function (data) {
+      }).then(function (_ref2) {
+        var data = _ref2.data;
+
         var reminders = data.map(function (r) {
           return _extends$5({}, r, {
-            date: moment.unix(r.date)
+            due: moment(r.due)
           });
         });
 
@@ -26651,16 +26653,20 @@ var App = function (_Component) {
       return rp({
         uri: window.location.origin + '/reminders',
         body: {
-          recipients: recipients,
-          date: date.unix(),
-          text: reminderText
+          reminder: {
+            recipients: recipients,
+            due: date.format(),
+            body: reminderText
+          }
         },
         json: true,
         headers: {
           'content-type': 'application/json'
         },
         method: 'POST' // *GET, POST, PUT, DELETE, etc.
-      }).then(function (reminder) {
+      }).then(function (_ref3) {
+        var reminder = _ref3.data;
+
         _this.setState({
           recipients: [],
           newRecipient: '',
@@ -26673,8 +26679,8 @@ var App = function (_Component) {
           _this.setState({ showLeft: false });
         });
       });
-    }, _this.handleTextChange = function (_ref2) {
-      var target = _ref2.target;
+    }, _this.handleTextChange = function (_ref4) {
+      var target = _ref4.target;
 
       target.style.height = 0;
       target.style.height = target.scrollHeight + 'px';
@@ -26888,7 +26894,7 @@ var NewReminder = function (_Component2) {
   inherits$1(NewReminder, _Component2);
 
   function NewReminder() {
-    var _ref3;
+    var _ref5;
 
     var _temp2, _this3, _ret2;
 
@@ -26898,7 +26904,7 @@ var NewReminder = function (_Component2) {
       args[_key2] = arguments[_key2];
     }
 
-    return _ret2 = (_temp2 = (_this3 = possibleConstructorReturn$1(this, (_ref3 = NewReminder.__proto__ || Object.getPrototypeOf(NewReminder)).call.apply(_ref3, [this].concat(args))), _this3), _this3.render = function () {
+    return _ret2 = (_temp2 = (_this3 = possibleConstructorReturn$1(this, (_ref5 = NewReminder.__proto__ || Object.getPrototypeOf(NewReminder)).call.apply(_ref5, [this].concat(args))), _this3), _this3.render = function () {
       var _this3$props = _this3.props,
           handleTextChange = _this3$props.handleTextChange,
           handleDateChange = _this3$props.handleDateChange,
@@ -27027,7 +27033,7 @@ var Reminder = function (_Component3) {
   inherits$1(Reminder, _Component3);
 
   function Reminder() {
-    var _ref4;
+    var _ref6;
 
     var _temp3, _this4, _ret3;
 
@@ -27037,7 +27043,7 @@ var Reminder = function (_Component3) {
       args[_key3] = arguments[_key3];
     }
 
-    return _ret3 = (_temp3 = (_this4 = possibleConstructorReturn$1(this, (_ref4 = Reminder.__proto__ || Object.getPrototypeOf(Reminder)).call.apply(_ref4, [this].concat(args))), _this4), _this4.state = {
+    return _ret3 = (_temp3 = (_this4 = possibleConstructorReturn$1(this, (_ref6 = Reminder.__proto__ || Object.getPrototypeOf(Reminder)).call.apply(_ref6, [this].concat(args))), _this4), _this4.state = {
       toggled: false
     }, _this4.componentDidMount = function () {
       var _this4$props = _this4.props,
@@ -27053,9 +27059,9 @@ var Reminder = function (_Component3) {
       }, 400);
     }, _this4.render = function () {
       var _this4$props2 = _this4.props,
-          date = _this4$props2.date,
+          due = _this4$props2.due,
           recipients = _this4$props2.recipients,
-          text = _this4$props2.text,
+          body = _this4$props2.body,
           id = _this4$props2.id,
           newestReminderID = _this4$props2.newestReminderID;
 
@@ -27071,7 +27077,7 @@ var Reminder = function (_Component3) {
           React.createElement(
             'div',
             { className: 'reminder-date' },
-            date.format('LL')
+            due.format('LL')
           ),
           recipients.length ? React.createElement(
             reactPopover,
@@ -27111,7 +27117,7 @@ var Reminder = function (_Component3) {
         React.createElement(
           'div',
           { className: 'reminder-body' },
-          text
+          body
         )
       );
     }, _temp3), possibleConstructorReturn$1(_this4, _ret3);
