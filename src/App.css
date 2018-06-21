@@ -247,6 +247,32 @@
   }
 }
 
+.autocomplete-list {
+  margin-top: 5px;
+  position: absolute;
+  border: 1px solid black;
+  border-radius: 3px;
+  padding: 5px;
+  background-color: white;
+}
+
+.autocomplete-selected {
+  font-weight: bold;
+}
+
+.autocomplete-suggestion {
+  display: flex;
+  padding: 3px;
+}
+
+.suggestion-login {
+}
+
+.suggestion-name {
+  color: #666;
+  margin-left: 5px;
+}
+
 html,
 body,
 div,

@@ -5,6 +5,7 @@ import DatePicker from 'react-datepicker'
 import moment from 'moment'
 import lightbulb from './lightbulb.svg'
 import Popover from 'react-popover'
+import _ from 'lodash'
 const rp = require('request-promise')
 
 class App extends Component {
@@ -12,7 +13,7 @@ class App extends Component {
     reminderText: '',
     newRecipient: '',
     showLeft: true,
-    datePickerFocus: false,
+    overflow: false,
     reminders: [],
     newestReminderID: null,
     recipients: [],
@@ -128,7 +129,7 @@ class App extends Component {
               className='reminders'
               style={{
                 ...styles,
-                overflow: this.state.datePickerFocus ? 'visible' : 'hidden'
+                overflow: this.state.overflow ? 'visible' : 'hidden'
               }}
             >
               <div className='reminders-header'>
@@ -188,15 +189,13 @@ class App extends Component {
                       <NewReminder
                         handleTextChange={this.handleTextChange}
                         handleDateChange={date => this.setState({ date })}
-                        handleDateFocus={bool =>
-                          this.setState({ datePickerFocus: bool })
-                        }
+                        handleFocus={bool => this.setState({ overflow: bool })}
                         handleNewRecipientChange={newRecipient => {
                           this.setState({ newRecipient })
                         }}
-                        handleAddRecipient={() => {
+                        handleAddRecipient={recipient => {
                           this.setState({
-                            recipients: [...recipients, newRecipient],
+                            recipients: [...recipients, recipient],
                             newRecipient: ''
                           })
                         }}
@@ -243,7 +242,6 @@ class NewReminder extends Component {
     let {
       handleTextChange,
       handleDateChange,
-      handleDateFocus,
       handleNewRecipientChange,
       handleAddRecipient,
       handlePostReminder,
@@ -251,7 +249,8 @@ class NewReminder extends Component {
       newRecipient,
       recipients,
       removeRecipient,
-      date
+      date,
+      handleFocus
     } = this.props
     return (
       <div className='reminders-body'>
@@ -269,8 +268,8 @@ class NewReminder extends Component {
           <div className='reminders-section-control'>
             <DatePicker
               selected={date}
-              onFocus={() => handleDateFocus(true)}
-              onBlur={() => handleDateFocus(false)}
+              onFocus={() => handleFocus(true)}
+              onBlur={() => handleFocus(false)}
               onChange={handleDateChange}
               className='reminders-date'
               dateFormat='LL'
@@ -300,16 +299,12 @@ class NewReminder extends Component {
               ))}
             </Transition>
 
-            <input
-              placeholder='New Recipient'
-              className='add-recipient reminders-recipient'
-              value={newRecipient}
-              onChange={e => handleNewRecipientChange(e.target.value)}
-              onKeyPress={e => {
-                if (e.key === 'Enter') {
-                  handleAddRecipient()
-                }
-              }}
+            <RecipientAutocomplete
+              newRecipient={newRecipient}
+              handleNewRecipientChange={handleNewRecipientChange}
+              handleAddRecipient={handleAddRecipient}
+              handleFocus={handleFocus}
+              recipients={recipients}
             />
           </div>
         </div>
@@ -319,6 +314,123 @@ class NewReminder extends Component {
             Create Reminder
           </div>
         </div>
+      </div>
+    )
+  }
+}
+
+class RecipientAutocomplete extends Component {
+  state = {
+    suggestions: [],
+    selectedIndex: 0,
+    focused: false
+  }
+
+  fetchSuggestions = _.debounce(login => {
+    return rp({
+      json: true,
+      method: 'GET',
+      uri: window.location.origin + '/users?login=' + login
+    }).then(({ data }) => {
+      this.setState({ suggestions: data })
+    })
+  }, 300)
+
+  matchingSuggestions = () => {
+    let { newRecipient, recipients } = this.props
+    if (newRecipient.length < 2) return []
+    let { suggestions } = this.state
+    return suggestions.filter(({ login }) => {
+      if (recipients.includes(login)) return false
+      return login.toLowerCase().startsWith(newRecipient.toLowerCase())
+    })
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.newRecipient !== prevProps.newRecipient) {
+      this.fetchSuggestions(this.props.newRecipient)
+    }
+  }
+
+  render() {
+    let {
+      newRecipient,
+      handleNewRecipientChange,
+      handleAddRecipient,
+      handleFocus
+    } = this.props
+
+    let { focused, selectedIndex, suggestions } = this.state
+    let renderedSuggestions = this.matchingSuggestions()
+
+    return (
+      <div>
+        <input
+          placeholder='New Recipient'
+          className='add-recipient reminders-recipient'
+          value={newRecipient}
+          onChange={e => handleNewRecipientChange(e.target.value)}
+          onFocus={() => {
+            this.setState({ focused: true })
+            handleFocus(true)
+          }}
+          onBlur={() => {
+            this.setState({ focused: false })
+            handleFocus(false)
+          }}
+          onKeyDown={e => {
+            switch (e.key) {
+              case 'ArrowUp':
+                this.setState({ selectedIndex: Math.max(selectedIndex - 1, 0) })
+                e.preventDefault()
+                break
+              case 'ArrowDown':
+                this.setState({
+                  selectedIndex: Math.min(
+                    selectedIndex + 1,
+                    renderedSuggestions.length - 1
+                  )
+                })
+                e.preventDefault()
+                break
+              default:
+                break
+            }
+          }}
+          onKeyPress={e => {
+            if (e.key === 'Enter') {
+              let recipient = renderedSuggestions[selectedIndex]
+              if (recipient && recipient.login) {
+                handleAddRecipient(recipient.login)
+              }
+            }
+          }}
+        />
+        {focused && renderedSuggestions.length ? (
+          <div className='autocomplete-list'>
+            {renderedSuggestions.map(
+              (
+                { login, first_name: firstName, last_name: lastName },
+                index
+              ) => (
+                <div
+                  key={login}
+                  className={
+                    'autocomplete-suggestion ' +
+                    (index === selectedIndex ? 'autocomplete-selected' : '')
+                  }
+                >
+                  <div className='suggestion-login'>{login}</div>
+                  <div className='suggestion-name'>
+                    {firstName} {lastName}
+                  </div>
+                </div>
+              )
+            )}
+          </div>
+        ) : (
+          ''
+        )}
       </div>
     )
   }
